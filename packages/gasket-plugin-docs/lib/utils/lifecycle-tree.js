@@ -10,12 +10,11 @@ module.exports = function buildLifeCycleTree(gasket, lifecycles) {
   const cmdPlugin = gasket.metadata.plugins.find(p => p.name === '@gasket/plugin-command');
   const cmds = cmdPlugin.commands.map(cmd => cmd.id);
 
-  let x = always[always.length - 1].name;
+  let lastLink = always[always.length - 1].name;
   let content = cmds.map(cmd => {
-    return x + '-->' + cmd;
+    return lastLink + '-->' + cmd;
   }).join(';\n')
 
-  console.log(prologue + ';\n' + content);
-  return JSON.stringify({ hooks, lifecycles }, null, 2);
-
+  const mermaid = prologue + ';\n' + content;
+  return mermaid;
 }
