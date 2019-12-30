@@ -16,7 +16,7 @@ const isUrl = /^(https?:)?\/\//;
  * @param {DocsConfigSet} docsConfigSet - Docs generation configs
  * @returns {Promise<string>} filename
  */
-function generateContent(docsConfigSet) {
+function generateContent(docsConfigSet, gasket) {
   const { app: appDocs, docsRoot } = docsConfigSet;
 
   const refMap = new Map();
@@ -62,7 +62,7 @@ function generateContent(docsConfigSet) {
   addSection('Commands', 'Available commands', docsConfigSet.commands, { includeVersion: false });
   addSection('Lifecycles', 'Available lifecycles', docsConfigSet.lifecycles, { includeVersion: false });
   addContent('Lifecycle Diagrams');
-  addCode(generateLifecycleTree(docsConfigSet.lifecycles));
+  addCode(generateLifecycleTree(gasket, docsConfigSet.lifecycles));
   addSection('Structures', 'Available structure', docsConfigSet.structures, { includeVersion: false });
   addSection('Presets', 'All configured presets', docsConfigSet.presets);
   addSection('Plugins', 'All configured plugins', docsConfigSet.plugins);
@@ -82,11 +82,11 @@ function generateContent(docsConfigSet) {
  * @param {DocsConfigSet} docsConfigSet - Docs generation configs
  * @returns {Promise<string>} filename
  */
-async function generateIndex(docsConfigSet) {
+async function generateIndex(docsConfigSet, gasket) {
   const { docsRoot } = docsConfigSet;
 
   const target = path.join(docsRoot, 'README.md');
-  const content = await generateIndex.generateContent(docsConfigSet);
+  const content = await generateIndex.generateContent(docsConfigSet, gasket);
   await writeFile(target, content);
   return target;
 }

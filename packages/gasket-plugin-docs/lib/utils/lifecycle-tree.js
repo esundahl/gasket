@@ -1,18 +1,21 @@
-module.exports = function buildLifeCycleTree(lifecycles) {
-  const parents = {};
+module.exports = function buildLifeCycleTree(gasket, lifecycles) {
+  const hooks = gasket._hooks;
+  // lifecycles that are always invoked
+  const always = lifecycles.filter(l => l.command === '*');
+  console.log(always);
 
-  lifecycles.forEach(l => {
-    if (l.parent) {
-      const parent = l.parent;
-      if (parents[parent]) {
-        parents[parent].push(l.name);
-      } else {
-        parents[parent] = [ l.name ];
-      }
-    }
-  });
+  const prologue = 'graph TD;\n * -->' + always.map(l => l.name).join('-->');
 
-  console.log(parents);
+  // find the commands that are directly invoked via command first
+  const cmdPlugin = gasket.metadata.plugins.find(p => p.name === '@gasket/plugin-command');
+  const cmds = cmdPlugin.commands.map(cmd => cmd.id);
 
-  return JSON.stringify(lifecycles, null, 2);
+  let x = always[always.length - 1].name;
+  let content = cmds.map(cmd => {
+    return x + '-->' + cmd;
+  }).join(';\n')
+
+  console.log(prologue + ';\n' + content);
+  return JSON.stringify({ hooks, lifecycles }, null, 2);
+
 }
