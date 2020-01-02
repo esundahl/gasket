@@ -1,20 +1,26 @@
 module.exports = function buildLifeCycleTree(gasket, lifecycles) {
-  const hooks = gasket._hooks;
   // lifecycles that are always invoked
   const always = lifecycles.filter(l => l.command === '*');
-  console.log(always);
 
+  // TODO: order correctly
   const prologue = 'graph TD;\n * -->' + always.map(l => l.name).join('-->');
 
   // find the commands that are directly invoked via command first
-  const cmds = gasket.commands.map(cmd => cmd.id);
-
   let lastLink = always[always.length - 1].name;
-  let content = cmds.map(cmd => {
+  let content = gasket.commands.map(cmd => {
     return lastLink + '-->' + cmd;
-  }).join(';\n')
+  }).join(';\n');
 
-  const mermaid = prologue + ';\n' + content;
+  const invokedBy = lifecycles.filter(l => l.command !== '*').map(l => {
+    if (l.command && l.command !== l.name) {
+      return l.command + '-->' + l.name;
+    }
 
+    if (l.parent && l.parent !== l.name) {
+      return l.parent + '-->' + l.name;
+    }
+  }).join(';\n');
+
+  const mermaid = [prologue, content, invokedBy].join(';\n');
   return mermaid;
 }
