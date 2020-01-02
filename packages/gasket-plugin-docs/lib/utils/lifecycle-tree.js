@@ -7,8 +7,7 @@ module.exports = function buildLifeCycleTree(gasket, lifecycles) {
   const prologue = 'graph TD;\n * -->' + always.map(l => l.name).join('-->');
 
   // find the commands that are directly invoked via command first
-  const cmdPlugin = gasket.metadata.plugins.find(p => p.name === '@gasket/plugin-command');
-  const cmds = cmdPlugin.commands.map(cmd => cmd.id);
+  const cmds = gasket.commands.map(cmd => cmd.id);
 
   let lastLink = always[always.length - 1].name;
   let content = cmds.map(cmd => {
@@ -16,5 +15,6 @@ module.exports = function buildLifeCycleTree(gasket, lifecycles) {
   }).join(';\n')
 
   const mermaid = prologue + ';\n' + content;
+
   return mermaid;
 }

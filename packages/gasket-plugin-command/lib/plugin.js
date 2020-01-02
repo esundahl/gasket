@@ -24,6 +24,8 @@ module.exports = {
           load: () => cmd
         }));
 
+      gasket.commands = commands.map(c => c.id);
+
       oclifConfig.plugins.push({
         name: 'Gasket commands',
         hooks: {},
