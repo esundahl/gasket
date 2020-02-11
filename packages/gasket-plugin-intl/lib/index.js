@@ -42,7 +42,9 @@ module.exports = {
         }
       };
     },
-    async create(gasket, { files, pkg }) {
+    async create(gasket, context) {
+      const { files, pkg, reactIntlVersion } = context;
+
       const rootDir = path.join(__dirname, '..');
       files.add(
         `${rootDir}/generator/*`,
@@ -51,7 +53,7 @@ module.exports = {
 
       pkg.add('dependencies', {
         '@gasket/intl': devDependencies['@gasket/intl'],
-        'react-intl': devDependencies['react-intl']
+        'react-intl': reactIntlVersion || devDependencies['react-intl']
       });
     },
     build,
